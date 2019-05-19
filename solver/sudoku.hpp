@@ -36,7 +36,9 @@ private:
 public:
     // Getter for testing purposes
     // Would like to make project more functional
-    std::array<std::array<int, N>, N> returnArray();
+    gridLayout returnArray();
+    // Generate random board for testing purposes
+    gridLayout generateBoard();
     // Runner for the backtracking algorithm
     bool solveSudoku();
     // Runner for initial grid validation
@@ -44,7 +46,9 @@ public:
     // Runner for printing the grid
     void printGrid();
     // Constructor. Initializes and validates the grid
-    explicit solver(gridLayout localGrid);
+    solver(gridLayout localGrid);
+    // Default constructor. Returns a random grid
+    solver();
 
 };
 #endif //SUDOKU_HPP

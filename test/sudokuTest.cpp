@@ -1,24 +1,13 @@
 #include <gtest/gtest.h>
 #include "../solver/sudoku.hpp"
+#include <iostream>
 
-struct sudokuTests : testing::Test{
-    gridLayout grid = {{{3, 0, 6, 5, 0, 8, 4, 0, 0},
-                               {5, 2, 0, 0, 0, 0, 0, 0, 0},
-                               {0, 8, 7, 0, 0, 0, 0, 3, 1},
-                               {0, 0, 3, 0, 1, 0, 0, 8, 0},
-                               {9, 0, 0, 8, 6, 3, 0, 0, 5},
-                               {0, 5, 0, 0, 9, 0, 6, 0, 0},
-                               {1, 3, 0, 0, 0, 0, 2, 5, 0},
-                               {0, 0, 0, 0, 0, 0, 0, 7, 4},
-                               {0, 0, 5, 2, 0, 6, 3, 0, 0}}};
-
-};
 
 /*
  * Checking to make sure the rows in a solved grid are valid
  */
-TEST_F(sudokuTests, rowTest){
-    solver sudokuSolver(grid);
+TEST(sudokuTests, rowTest){
+    solver sudokuSolver;
     sudokuSolver.solveSudoku();
     gridLayout solved = sudokuSolver.returnArray();
 
@@ -42,8 +31,8 @@ TEST_F(sudokuTests, rowTest){
 /*
  * Checking to make sure the rows in a solved grid are valid
  */
-TEST_F(sudokuTests, columnTest) {
-    solver sudokuSolver(grid);
+TEST(sudokuTests, columnTest) {
+    solver sudokuSolver;
     sudokuSolver.solveSudoku();
     gridLayout solved = sudokuSolver.returnArray();
 
@@ -68,8 +57,8 @@ TEST_F(sudokuTests, columnTest) {
  * Checking to make sure no invalid numbers (outside 1-N) are in a solved grid
  * N is defined in solver/sudoku.hpp
  */
-TEST_F(sudokuTests, validNumberTest){
-    solver sudokuSolver(grid);
+TEST(sudokuTests, validNumberTest){
+    solver sudokuSolver;
     sudokuSolver.solveSudoku();
     gridLayout solved = sudokuSolver.returnArray();
 

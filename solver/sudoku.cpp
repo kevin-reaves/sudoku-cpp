@@ -2,9 +2,47 @@
 #include <iostream>
 #include <set>
 #include <assert.h>
+#include <bits/stdc++.h>
 
-std::array<std::array<int,N>,N> solver::returnArray(){
+
+gridLayout solver::returnArray(){
     return grid;
+}
+
+gridLayout solver::generateBoard() {
+    // This generate method could be better
+    // Mostly getting something on paper so I can focus on testing
+    int shuffleArray[N];
+    for(int row=0; row<N; row++){
+        shuffleArray[row] = row;
+    }
+
+    // Need to figure random seeds out later, don't want to keep putting time into it
+    unsigned seed = 10000;
+    shuffle(shuffleArray, shuffleArray + N-1, std::default_random_engine(seed));
+
+    for(int row=0; row<N; row++){
+        this->grid[0][row] = shuffleArray[row];
+    }
+    solveSudoku();
+
+    for(int row=0; row<N; row++){
+        for(int col=0; col<N; col++){
+            if(row %2 == 0 && col % 2 == 0){
+                this->grid[row][col] = 0;
+            }
+        }
+    }
+}
+
+solver::solver(){
+    for(int row = 0; row < N; row++){
+        for(int col = 0; col < N; col++){
+            this->grid[row][col] = 0;
+        }
+    }
+    std::srand(time(nullptr));
+    generateBoard();
 }
 
 solver::solver(gridLayout localGrid)
@@ -25,7 +63,7 @@ bool solver::solveSudoku()
     if (!findUnassignedLocation(row, col))
         return true; // success
 
-    for (int num = 1; num <= 9; num++)
+    for (int num = 1; num <= N; num++)
     {
         if (isSafe(row, col, num))
         {
@@ -101,7 +139,7 @@ bool solver::validRow(int row)
 {
     std::set<int> used;
 
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < N; i++) {
         if (used.find(this->grid[row][i]) != used.end())
             return false;
 
@@ -115,7 +153,7 @@ bool solver::validCol(int col)
 {
     std::set<int> used;
 
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < N; i++) {
         if (used.find(this->grid[i][col]) != used.end()) {
             return false;
         }
@@ -155,8 +193,8 @@ bool solver::isValid(int row, int col)
 
 bool solver::checkValid()
 {
-    for (int i = 1; i < 9; i++) {
-        for (int j = 1; j < 9; j++) {
+    for (int i = 1; i < N; i++) {
+        for (int j = 1; j < N; j++) {
             if (isValid(i, j) == 0) {
                 return false;
             }

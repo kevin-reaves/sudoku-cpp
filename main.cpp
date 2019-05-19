@@ -12,7 +12,8 @@ int main() {
                       {0, 0, 0, 0, 0, 0, 0, 7, 4},
                       {0, 0, 5, 2, 0, 6, 3, 0, 0}}};
 
-    solver sudokuSolver(grid);
+    solver sudokuSolver;
+    sudokuSolver.printGrid();
     if(sudokuSolver.solveSudoku()) {
         sudokuSolver.printGrid();
     } else{
