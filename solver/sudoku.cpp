@@ -3,6 +3,9 @@
 #include <set>
 #include <assert.h>
 
+std::array<std::array<int,N>,N> solver::returnArray(){
+    return grid;
+}
 
 solver::solver(gridLayout localGrid)
 {

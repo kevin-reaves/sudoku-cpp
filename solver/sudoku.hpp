@@ -1,6 +1,7 @@
 #ifndef SUDOKU_HPP
 #define SUDOKU_HPP
 
+#include <vector>
 #include <array>
 #define UNASSIGNED 0
 #define N 9
@@ -10,7 +11,7 @@ using gridLayout = std::array<std::array<int, N>, N>;
 
 class solver{
 private:
-    int grid[N][N];
+    gridLayout grid;
 
     // Finds empty spots in the grid. Empty spots are zeroes
     bool findUnassignedLocation(int & row, int & col);
@@ -33,6 +34,9 @@ private:
     // Wrapper method to check row/col/box
     bool isValid(int row, int col);
 public:
+    // Getter for testing purposes
+    // Would like to make project more functional
+    std::array<std::array<int, N>, N> returnArray();
     // Runner for the backtracking algorithm
     bool solveSudoku();
     // Runner for initial grid validation
