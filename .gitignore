@@ -1,0 +1,9 @@
+# for files with no extension
+*
+!*/
+!*.*
+
+build/
+googletest/
+.idea/
+cmake-build-debug/
