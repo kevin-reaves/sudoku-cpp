@@ -18,22 +18,11 @@ gridLayout solver::generateBoard() {
     unsigned seed = std::chrono::system_clock().now().time_since_epoch().count();
     std::default_random_engine e(seed);
 
-// This generate method could be better
-// Mostly getting something on paper so I can focus on testing
-//    std::vector<int> shuffleVector;
-//    for(int count=1; count<=N; count++){
-//        shuffleVector.push_back(count);
-//    }
-
-
-    // This generate method could be better
-    // Mostly getting something on paper so I can focus on testing
     int shuffleArray[N];
     for(int row=0; row<N; row++){
         shuffleArray[row] = row;
     }
 
-    // Need to figure random seeds out later, don't want to keep putting time into it
     shuffle(shuffleArray, shuffleArray + N-1, e);
 
     for(int row=0; row<N; row++){

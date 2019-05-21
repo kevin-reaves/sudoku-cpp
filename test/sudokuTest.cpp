@@ -71,3 +71,33 @@ TEST(sudokuTests, validNumberTest){
         }
     }
 }
+
+/*
+ * Checks to make sure a solved grid returns itself
+ */
+TEST(sudokuTests, solvedGridTest){
+    solver sudokuSolver;
+    sudokuSolver.solveSudoku();
+    gridLayout solvedA = sudokuSolver.returnArray();
+
+    gridLayout solvedB;
+
+    // Manual deep copy
+    for(int row=0; row<N; row++){
+        for(int col=0; col<N; col++){
+            solvedB[row][col] = solvedA[row][col];
+        }
+    }
+
+    solver alreadySolved(solvedB);
+    alreadySolved.solveSudoku();
+    solvedB = alreadySolved.returnArray();
+
+
+    // Using N instead of size here in case something dumb happens
+    for(int row=0; row<N; row++){
+        for(int col=0; col<N; col++){
+            EXPECT_EQ(solvedA[row][col], solvedB[row][col]) << "A solved array changes when being sent back through\n";
+        }
+    }
+}
