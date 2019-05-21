@@ -62,7 +62,6 @@ solver::solver(){
         }
     }
     generateBoard();
-    printGrid();
 }
 
 solver::solver(gridLayout localGrid)
