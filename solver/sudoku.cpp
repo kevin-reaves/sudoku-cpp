@@ -4,12 +4,28 @@
 #include <assert.h>
 #include <bits/stdc++.h>
 
+#include <algorithm>
+#include <vector>
+#include <random>
+#include <chrono>
 
 gridLayout solver::returnArray(){
     return grid;
 }
 
 gridLayout solver::generateBoard() {
+
+    unsigned seed = std::chrono::system_clock().now().time_since_epoch().count();
+    std::default_random_engine e(seed);
+
+// This generate method could be better
+// Mostly getting something on paper so I can focus on testing
+//    std::vector<int> shuffleVector;
+//    for(int count=1; count<=N; count++){
+//        shuffleVector.push_back(count);
+//    }
+
+
     // This generate method could be better
     // Mostly getting something on paper so I can focus on testing
     int shuffleArray[N];
@@ -18,17 +34,21 @@ gridLayout solver::generateBoard() {
     }
 
     // Need to figure random seeds out later, don't want to keep putting time into it
-    unsigned seed = 10000;
-    shuffle(shuffleArray, shuffleArray + N-1, std::default_random_engine(seed));
+    shuffle(shuffleArray, shuffleArray + N-1, e);
 
     for(int row=0; row<N; row++){
         this->grid[0][row] = shuffleArray[row];
     }
+
     solveSudoku();
+
+    // will revert some numbers back to 0 randomly
+    int thanos;
 
     for(int row=0; row<N; row++){
         for(int col=0; col<N; col++){
-            if(row %2 == 0 && col % 2 == 0){
+            thanos = rand() % 101;
+            if(thanos < 50){
                 this->grid[row][col] = 0;
             }
         }
@@ -41,8 +61,8 @@ solver::solver(){
             this->grid[row][col] = 0;
         }
     }
-    std::srand(time(nullptr));
     generateBoard();
+    printGrid();
 }
 
 solver::solver(gridLayout localGrid)
