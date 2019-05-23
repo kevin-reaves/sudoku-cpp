@@ -44,3 +44,12 @@ For digits 1-9 (for a 9x9 grid)
 4. Else, remove the digit and try another
 
 If all digits have been tried, there has been a problem. Return false
+
+
+
+
+
+Build instructions
+
+1. ```git clone https://github.com/google/googletest.git```
+2. ```cmake .```

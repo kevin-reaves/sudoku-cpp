@@ -12,17 +12,12 @@ enable_testing()
 
 add_subdirectory(googletest)
 
-set(Headers
-    solver/sudoku.hpp
-)
+set(Headers solver/sudoku.hpp)
 
-set(Sources
-    solver/sudoku.cpp
-)
+set(Sources solver/sudoku.cpp)
 
 add_library(${This} STATIC ${Sources} ${Headers})
 
-# Just for debugging
-add_executable(sudokuDebug main.cpp)
+add_executable(main main.cpp)
 
 add_subdirectory(test)

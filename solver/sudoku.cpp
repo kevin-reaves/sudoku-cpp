@@ -5,91 +5,108 @@
 #include <bits/stdc++.h>
 
 #include <algorithm>
-#include <vector>
 #include <random>
 #include <chrono>
 
-gridLayout solver::returnArray(){
-    return grid;
+gameBoard solver::returnBoard(){
+    return this->board;
 }
 
-gridLayout solver::generateBoard() {
+
+gameBoard solver::generateBoard() {
 
     unsigned seed = std::chrono::system_clock().now().time_since_epoch().count();
     std::default_random_engine e(seed);
 
-    int shuffleArray[N];
-    for(int row=0; row<N; row++){
+    int shuffleArray[BOARDSIZE];
+    for (int row = 0; row < BOARDSIZE; row++) {
         shuffleArray[row] = row;
     }
 
-    shuffle(shuffleArray, shuffleArray + N-1, e);
+    shuffle(shuffleArray, shuffleArray + BOARDSIZE - 1, e);
 
-    for(int row=0; row<N; row++){
-        this->grid[0][row] = shuffleArray[row];
+    for (int row = 0; row < BOARDSIZE; row++) {
+        this->board[0][row] = shuffleArray[row];
     }
 
     solveSudoku();
 
-    // will revert some numbers back to 0 randomly
+    // will revert roughly half of numbers back to 0 randomly
     int thanos;
 
-    for(int row=0; row<N; row++){
-        for(int col=0; col<N; col++){
+    for (int row = 0; row < BOARDSIZE; row++) {
+        for (int col = 0; col < BOARDSIZE; col++) {
             thanos = rand() % 101;
-            if(thanos < 50){
-                this->grid[row][col] = 0;
+            if (thanos < 50) {
+                this->board[row][col] = 0;
             }
         }
     }
 }
 
-solver::solver(){
-    for(int row = 0; row < N; row++){
-        for(int col = 0; col < N; col++){
-            this->grid[row][col] = 0;
+
+solver::solver() {
+    for (int row = 0; row < BOARDSIZE; row++) {
+        for (int col = 0; col < BOARDSIZE; col++) {
+            this->board[row][col] = 0;
         }
     }
     generateBoard();
 }
 
-solver::solver(gridLayout localGrid)
-{
-    for(int row = 0; row < localGrid.size(); row++){
-        for(int col = 0; col < localGrid.size(); col++){
-            this->grid[row][col] = localGrid[row][col];
+solver::solver(gameBoard localBoard) {
+    /*
+     * TODO
+     * Figure out how to do this without loading the whole board into
+     * memory or creating a duplicate function call for isValidBoard.
+     * isValidBoard has lots of logic. May need to break it out
+     */
+    for (int row = 0; row < localBoard.size(); row++) {
+        for (int col = 0; col < localBoard.size(); col++) {
+            this->board[row][col] = localBoard[row][col];
         }
     }
 
     // confirm the input grid is valid
-    assert (checkValid() == 1);
+    assert (isValidBoard());
 }
 
 bool solver::solveSudoku()
 {
-    int row, col;
-    if (!findUnassignedLocation(row, col))
+    int row = 0, col = 0;
+    if (!findUnassignedLocation(row, col)) {
         return true; // success
+    }
 
-    for (int num = 1; num <= N; num++)
+    for (int num = 1; num <= BOARDSIZE; num++)
     {
-        if (isSafe(row, col, num))
+        this->board[row][col] = num;
+
+        if (isValidMove(row, col))
         {
-            this->grid[row][col] = num;
-
             if (solveSudoku())
+            {
                 return true; // success
-
-            this->grid[row][col] = UNASSIGNED;
+            }
+            else
+            {
+                // The move doesn't lead towards a path that solves the puzzle, it needs to be backed out
+                this->board[row][col] = UNASSIGNED;
+            }
+        }
+        else
+        {
+            // The move isn't valid, it needs to be backed out
+            this->board[row][col] = UNASSIGNED;
         }
     }
     return false; // backtracking
 }
 
-bool solver::findUnassignedLocation(int & row, int & col){
-    for(row = 0; row < N; row++){
-        for(col = 0; col < N; col++){
-            if(this->grid[row][col] == UNASSIGNED){
+const bool solver::findUnassignedLocation(int & row, int & col){
+    for(row = 0; row < BOARDSIZE; row++){
+        for(col = 0; col < BOARDSIZE; col++){
+            if(this->board[row][col] == UNASSIGNED){
                 return true;
             }
         }
@@ -97,44 +114,9 @@ bool solver::findUnassignedLocation(int & row, int & col){
     return false;
 }
 
-bool solver::usedInRow(int row, int num){
-    for(int col = 0; col < N; col++){
-        if(this->grid[row][col] == num){
-            return true;
-        }
-    }
-    return false;
-}
-
-bool solver::usedInCol(int col, int num){
-    for(int row = 0; row < N; row++){
-        if(this->grid[row][col] == num){
-            return true;
-        }
-    }
-    return false;
-}
-
-bool solver::usedInBox(int startBoxRow, int startBoxCol, int num){
-    for (int row = 0; row < 3; row++)
-        for (int col = 0; col < 3; col++)
-            if (this->grid[row+startBoxRow][col+startBoxCol] == num)
-                return true;
-    return false;
-}
-
-bool solver::isSafe(int row, int col, int num){
-    return
-        !usedInRow(row, num) &&
-        !usedInCol(col, num) &&
-        !usedInBox((row - row%3), (col - col % 3), num);
-}
-
-void solver::printGrid(){
-    for (auto& row : this->grid)
-    {
-        for (auto& col : row)
-        {
+const void solver::printBoard() {
+    for (auto &row : this->board) {
+        for (auto &col : row) {
             std::cout << col << " ";
         }
         std::cout << std::endl;
@@ -142,45 +124,41 @@ void solver::printGrid(){
     std::cout << std::endl;
 }
 
-
-bool solver::validRow(int row)
-{
+const bool solver::isValidRow(int row) {
     std::set<int> used;
 
-    for (int i = 0; i < N; i++) {
-        if (used.find(this->grid[row][i]) != used.end())
+    for (int i = 0; i < BOARDSIZE; i++) {
+        if (used.find(this->board[row][i]) != used.end())
             return false;
 
-        if (this->grid[row][i] != 0)
-            used.insert(this->grid[row][i]);
+        if (this->board[row][i] != 0)
+            used.insert(this->board[row][i]);
     }
     return true;
 }
 
-bool solver::validCol(int col)
-{
+const bool solver::isValidCol(int col) {
     std::set<int> used;
 
-    for (int i = 0; i < N; i++) {
-        if (used.find(this->grid[i][col]) != used.end()) {
+    for (int i = 0; i < BOARDSIZE; i++) {
+        if (used.find(this->board[i][col]) != used.end()) {
             return false;
         }
 
-        if (this->grid[i][col] != 0)
-            used.insert(this->grid[i][col]);
+        if (this->board[i][col] != 0)
+            used.insert(this->board[i][col]);
     }
     return true;
 }
 
-bool solver::validBox(int startBoxRow, int startBoxCol)
-{
+const bool solver::isValidBox(int startRow, int startCol) {
     std::set<int> used;
 
     for (int row = 0; row < 3; row++) {
         for (int col = 0; col < 3; col++) {
-            int curr = this->grid[row + startBoxRow][col + startBoxCol];
+            int curr = this->board[row + startRow][col + startCol];
 
-            if (used.find(curr) != used.end() && curr != 0){
+            if (used.find(curr) != used.end() && curr != 0) {
                 return false;
             }
 
@@ -192,18 +170,23 @@ bool solver::validBox(int startBoxRow, int startBoxCol)
 }
 
 
-bool solver::isValid(int row, int col)
-{
-    return  validRow(row) &&
-            validCol(col) &&
-            validBox(row - row % 3, col - col % 3);
+const bool solver::isValidMove(int row, int col) {
+    return isValidRow(row) &&
+           isValidCol(col) &&
+           isValidBox(row - row % 3, col - col % 3);
 }
 
-bool solver::checkValid()
-{
-    for (int i = 1; i < N; i++) {
-        for (int j = 1; j < N; j++) {
-            if (isValid(i, j) == 0) {
+const bool solver::isValidBoard() {
+    // Keeping up with the counters for row/col and grid
+    for (int colRow = 0, grid = 0; colRow < BOARDSIZE; colRow++, grid++) {
+        // returns false if any of the rows or columns are invalid
+        if (!isValidRow(colRow) || !isValidCol(colRow)) {
+            return false;
+        }
+        if (grid % 3 == 0) {
+            // returns false if any of the grids are invalid
+            // only need to run the grid checker every three iterations
+            if (!isValidBox(colRow, grid)) {
                 return false;
             }
         }

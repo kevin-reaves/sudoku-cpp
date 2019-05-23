@@ -9,11 +9,11 @@
 TEST(sudokuTests, rowTest){
     solver sudokuSolver;
     sudokuSolver.solveSudoku();
-    gridLayout solved = sudokuSolver.returnArray();
+    gameBoard solved = sudokuSolver.returnBoard();
 
     std::set<int> used;
 
-    // Similar to validRow function from solver/sudoku.cpp
+    // Similar to isValidRow function from solver/sudoku.cpp
     for(int row=0; row<solved.size(); row++){
         for(int col=0; col<solved[row].size(); col++){
             // There shouldn't be any duplicate numbers in a row
@@ -34,12 +34,12 @@ TEST(sudokuTests, rowTest){
 TEST(sudokuTests, columnTest) {
     solver sudokuSolver;
     sudokuSolver.solveSudoku();
-    gridLayout solved = sudokuSolver.returnArray();
+    gameBoard solved = sudokuSolver.returnBoard();
 
     std::set<int> used;
 
     for (int col = 0; col < solved[0].size(); col++) {
-        // Similar to validRow function from solver/sudoku.cpp
+        // Similar to isValidRow function from solver/sudoku.cpp
         for (int row = 0; row < solved.size(); row++) {
                 // There shouldn't be any duplicate numbers in a row
                 if(used.find(solved[row][col]) != used.end()) {
@@ -60,12 +60,12 @@ TEST(sudokuTests, columnTest) {
 TEST(sudokuTests, validNumberTest){
     solver sudokuSolver;
     sudokuSolver.solveSudoku();
-    gridLayout solved = sudokuSolver.returnArray();
+    gameBoard solved = sudokuSolver.returnBoard();
 
     for(int row=0; row<solved.size(); row++){
         for(int col=0; col<solved[row].size(); col++){
             // There should only be numbers from 1-N in a grid
-            if(solved[row][col] > N || solved[row][col] < 1){
+            if(solved[row][col] > BOARDSIZE || solved[row][col] < 1){
                 ASSERT_FALSE(true) << "There is a number outside 1-N in a solved grid\n";
             }
         }
@@ -78,25 +78,25 @@ TEST(sudokuTests, validNumberTest){
 TEST(sudokuTests, solvedGridTest){
     solver sudokuSolver;
     sudokuSolver.solveSudoku();
-    gridLayout solvedA = sudokuSolver.returnArray();
+    gameBoard solvedA = sudokuSolver.returnBoard();
 
-    gridLayout solvedB;
+    gameBoard solvedB;
 
     // Manual deep copy
-    for(int row=0; row<N; row++){
-        for(int col=0; col<N; col++){
+    for(int row=0; row<BOARDSIZE; row++){
+        for(int col=0; col<BOARDSIZE; col++){
             solvedB[row][col] = solvedA[row][col];
         }
     }
 
     solver alreadySolved(solvedB);
     alreadySolved.solveSudoku();
-    solvedB = alreadySolved.returnArray();
+    solvedB = alreadySolved.returnBoard();
 
 
     // Using N instead of size here in case something dumb happens
-    for(int row=0; row<N; row++){
-        for(int col=0; col<N; col++){
+    for(int row=0; row<BOARDSIZE; row++){
+        for(int col=0; col<BOARDSIZE; col++){
             EXPECT_EQ(solvedA[row][col], solvedB[row][col]) << "A solved array changes when being sent back through\n";
         }
     }
