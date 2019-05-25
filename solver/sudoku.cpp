@@ -15,7 +15,7 @@ gameBoard solver::returnBoard(){
 
 gameBoard solver::generateBoard() {
 
-    unsigned seed = std::chrono::system_clock().now().time_since_epoch().count();
+    long seed = std::chrono::system_clock().now().time_since_epoch().count();
     std::default_random_engine e(seed);
 
     int shuffleArray[BOARDSIZE];
@@ -124,7 +124,7 @@ const void solver::printBoard() {
     std::cout << std::endl;
 }
 
-const bool solver::isValidRow(int row) {
+const bool solver::isValidRow(const int row) {
     std::set<int> used;
 
     for (int i = 0; i < BOARDSIZE; i++) {
@@ -137,7 +137,7 @@ const bool solver::isValidRow(int row) {
     return true;
 }
 
-const bool solver::isValidCol(int col) {
+const bool solver::isValidCol(const int col) {
     std::set<int> used;
 
     for (int i = 0; i < BOARDSIZE; i++) {
@@ -151,7 +151,7 @@ const bool solver::isValidCol(int col) {
     return true;
 }
 
-const bool solver::isValidBox(int startRow, int startCol) {
+const bool solver::isValidBox(const int startRow, const int startCol) {
     std::set<int> used;
 
     for (int row = 0; row < 3; row++) {
@@ -170,7 +170,7 @@ const bool solver::isValidBox(int startRow, int startCol) {
 }
 
 
-const bool solver::isValidMove(int row, int col) {
+const bool solver::isValidMove(const int row, const int col) {
     return isValidRow(row) &&
            isValidCol(col) &&
            isValidBox(row - row % 3, col - col % 3);
