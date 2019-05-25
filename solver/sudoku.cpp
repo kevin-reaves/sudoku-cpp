@@ -67,7 +67,7 @@ solver::solver(gameBoard localBoard) {
         }
     }
 
-    // confirm the input grid is valid
+    // confirm the input board is valid
     assert (isValidBoard());
 }
 
@@ -177,7 +177,7 @@ const bool solver::isValidMove(int row, int col) {
 }
 
 const bool solver::isValidBoard() {
-    // Keeping up with the counters for row/col and grid
+    // Keeping up with the counters for row/col and 3x3 grid
     for (int colRow = 0, grid = 0; colRow < BOARDSIZE; colRow++, grid++) {
         // returns false if any of the rows or columns are invalid
         if (!isValidRow(colRow) || !isValidCol(colRow)) {

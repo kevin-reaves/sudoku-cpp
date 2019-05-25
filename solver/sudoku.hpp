@@ -5,8 +5,8 @@
 
 #define UNASSIGNED 0
 
-// Size of a grid on the sudoku board
-// For example, a board size of 9 means a 9x9 grid and 81 elements total
+// Size of a the sudoku board
+// For example, a board size of 9 means a 9x9 board and 81 spaces total
 #define BOARDSIZE 9
 
 typedef std::array<std::array<int, BOARDSIZE>, BOARDSIZE> gameBoard;
@@ -16,7 +16,7 @@ class solver {
 private:
     gameBoard board;
 
-    // Finds empty spots (UNASSIGNED) in the grid
+    // Finds empty spots (UNASSIGNED) in the board
     const bool findUnassignedLocation(int & row, int & col);
 
     // Checks if a row is valid
@@ -38,7 +38,7 @@ private:
     gameBoard generateBoard();
 
 public:
-    // Outputs a gameBoard object
+    // Prints a gameBoard object to the console
     const void printBoard();
 
     // Checks to make sure the entire board is valid
@@ -50,10 +50,10 @@ public:
     // Runner for the backtracking algorithm
     bool solveSudoku();
 
-    // Constructor. Initializes and validates the grid
+    // Takes a board, checks to make sure it's valid
     explicit solver(gameBoard localBoard);
 
-    // Default constructor. Returns a random grid
+    // Default constructor. Returns a random board
     solver();
 
 };
