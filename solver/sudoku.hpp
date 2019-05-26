@@ -16,8 +16,8 @@ class solver {
 private:
     gameBoard board;
 
-    // Finds empty spots (UNASSIGNED) in the board
-    const bool findUnassignedLocation(int & row, int & col);
+    // Finds empty spots (UNASSIGNED) in the board, changes the row,col values
+    bool findUnassignedLocation(int & row, int & col);
 
     // Checks if a row is valid
     const bool isValidRow(int row);

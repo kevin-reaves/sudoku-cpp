@@ -14,7 +14,7 @@ int main() {
         {3, 4, 5, 2, 8, 6, 1, 7, 0}
     }};
 
-    solver sudokuSolver;
+    solver sudokuSolver(board);
     if(sudokuSolver.solveSudoku()) {
         sudokuSolver.printBoard();
     } else{

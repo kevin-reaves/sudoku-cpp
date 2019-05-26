@@ -1,9 +1,7 @@
 #include "sudoku.hpp"
 #include <iostream>
 #include <set>
-#include <assert.h>
 #include <bits/stdc++.h>
-
 #include <algorithm>
 #include <random>
 #include <chrono>
@@ -19,12 +17,16 @@ gameBoard solver::generateBoard() {
     std::default_random_engine e(seed);
 
     int shuffleArray[BOARDSIZE];
+
+    // Creates an array of 1..9
     for (int row = 0; row < BOARDSIZE; row++) {
         shuffleArray[row] = row;
     }
 
+    // Randomizes the array
     shuffle(shuffleArray, shuffleArray + BOARDSIZE - 1, e);
 
+    // Uses the random array to be the top row of this->board
     for (int row = 0; row < BOARDSIZE; row++) {
         this->board[0][row] = shuffleArray[row];
     }
@@ -36,6 +38,7 @@ gameBoard solver::generateBoard() {
 
     for (int row = 0; row < BOARDSIZE; row++) {
         for (int col = 0; col < BOARDSIZE; col++) {
+            // 101 generates random numbers from 0..100
             thanos = rand() % 101;
             if (thanos < 50) {
                 this->board[row][col] = 0;
@@ -51,16 +54,16 @@ solver::solver() {
             this->board[row][col] = 0;
         }
     }
+
     generateBoard();
 }
 
+/*
+ * TODO
+ * Figure out how to do this without loading the whole board into
+ * memory or creating a duplicate function call for isValidBoard.
+ */
 solver::solver(gameBoard localBoard) {
-    /*
-     * TODO
-     * Figure out how to do this without loading the whole board into
-     * memory or creating a duplicate function call for isValidBoard.
-     * isValidBoard has lots of logic. May need to break it out
-     */
     for (int row = 0; row < localBoard.size(); row++) {
         for (int col = 0; col < localBoard.size(); col++) {
             this->board[row][col] = localBoard[row][col];
@@ -68,16 +71,28 @@ solver::solver(gameBoard localBoard) {
     }
 
     // confirm the input board is valid
-    assert (isValidBoard());
+    if (!isValidBoard()){
+        throw std::invalid_argument("The board you've passed into the constructor is invalid");
+    }
 }
 
 bool solver::solveSudoku()
 {
     int row = 0, col = 0;
+
+    // If there are no more zeroes on the board, it's (almost certainly) solved
     if (!findUnassignedLocation(row, col)) {
-        return true; // success
+        if(isValidBoard()){
+            return true; // success
+        } else {
+            throw std::runtime_error("An invalid board has made it through the solver");
+        }
     }
 
+    // Backtracking algorithm
+    // Try placing a number, then follow that path until you either
+    // solve the board or decide that was not the correct path
+    // If that was not the correct path, back up and try another number
     for (int num = 1; num <= BOARDSIZE; num++)
     {
         this->board[row][col] = num;
@@ -103,7 +118,8 @@ bool solver::solveSudoku()
     return false; // backtracking
 }
 
-const bool solver::findUnassignedLocation(int & row, int & col){
+// This function modifies the arguments passed into it
+bool solver::findUnassignedLocation(int & row, int & col){
     for(row = 0; row < BOARDSIZE; row++){
         for(col = 0; col < BOARDSIZE; col++){
             if(this->board[row][col] == UNASSIGNED){
@@ -111,6 +127,7 @@ const bool solver::findUnassignedLocation(int & row, int & col){
             }
         }
     }
+    // There are no more zeroes on the board
     return false;
 }
 
@@ -124,6 +141,7 @@ const void solver::printBoard() {
     std::cout << std::endl;
 }
 
+// Checks to make sure a row doesn't contain any duplicate numbers
 const bool solver::isValidRow(const int row) {
     std::set<int> used;
 
@@ -137,6 +155,7 @@ const bool solver::isValidRow(const int row) {
     return true;
 }
 
+// Checks to make sure a column doesn't contain any duplicate numbers
 const bool solver::isValidCol(const int col) {
     std::set<int> used;
 
@@ -151,6 +170,8 @@ const bool solver::isValidCol(const int col) {
     return true;
 }
 
+// Checks to make sure a box (3x3 square) doesn't contain any duplicate values
+// Also checks to make sure none of the values in the box are outside 0-9
 const bool solver::isValidBox(const int startRow, const int startCol) {
     std::set<int> used;
 
@@ -158,7 +179,8 @@ const bool solver::isValidBox(const int startRow, const int startCol) {
         for (int col = 0; col < 3; col++) {
             int curr = this->board[row + startRow][col + startCol];
 
-            if (used.find(curr) != used.end() && curr != 0) {
+            // Curr has been used before      ||  curr is too big  || curr is too small
+            if (used.find(curr) != used.end() || (curr > BOARDSIZE || curr < 0)) {
                 return false;
             }
 
@@ -169,13 +191,14 @@ const bool solver::isValidBox(const int startRow, const int startCol) {
     return true;
 }
 
-
+// Calls the functions to check row, column, and box safety for a given board space
 const bool solver::isValidMove(const int row, const int col) {
     return isValidRow(row) &&
            isValidCol(col) &&
            isValidBox(row - row % 3, col - col % 3);
 }
 
+// Calls the functions to check row, column, and box safety for the whole board
 const bool solver::isValidBoard() {
     // Keeping up with the counters for row/col and 3x3 grid
     for (int colRow = 0, grid = 0; colRow < BOARDSIZE; colRow++, grid++) {
