@@ -7,3 +7,7 @@ build/
 googletest/
 .idea/
 cmake-build-debug/
+*.cmake
+CMakeCache.txt
+CMakeFiles/
+*lib/

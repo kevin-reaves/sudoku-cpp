@@ -1,54 +1,61 @@
 #ifndef SUDOKU_HPP
 #define SUDOKU_HPP
 
-#include <vector>
 #include <array>
+
 #define UNASSIGNED 0
-#define N 9
-using gridLayout = std::array<std::array<int, N>, N>;
+
+// Size of a the sudoku board
+// For example, a board size of 9 means a 9x9 board and 81 spaces total
+#define BOARDSIZE 9
+
+typedef std::array<std::array<int, BOARDSIZE>, BOARDSIZE> gameBoard;
 
 
-
-class solver{
+class solver {
 private:
-    gridLayout grid;
+    gameBoard board;
 
-    // Finds empty spots in the grid. Empty spots are zeroes
+    // Finds empty spots (UNASSIGNED) in the board, changes the row,col values
     bool findUnassignedLocation(int & row, int & col);
-    // Checks to make sure a value hasn't been used in that row
-    bool usedInRow(int col, int num);
-    // Checks to make sure a value hasn't been used in that column
-    bool usedInCol(int row, int num);
-    // Checks to make sure a value hasn't been used in that box
-    bool usedInBox(int startBoxRow, int startBoxCol, int num);
-    // Wrapper method to check row/col/box
-    bool isSafe(int row, int col, int num);
 
-    // The below methods are checking the input grid to make sure it follows sudoku rules
-    // Makes sure a row is valid
-    bool validRow(int row);
-    // Makes sure a column is valid
-    bool validCol(int col);
-    // Makes sure a box is valid
-    bool validBox(int startBoxRow, int startBoxCol);
-    // Wrapper method to check row/col/box
-    bool isValid(int row, int col);
+    // Checks if a row is valid
+    const bool isValidRow(int row);
+
+    // Checks if a column is valid
+    const bool isValidCol(int col);
+
+    // Checks if a box is valid
+    const bool isValidBox(int startRow, int startCol);
+
+    /*
+     * Used for validating individual moves, use isValidBoard to validate the whole board
+     * Calls the isValidRow, isValidCol, isValidBox methods
+     */
+    const bool isValidMove(int row, int col);
+
+    // Generate random board, called by default constructor
+    gameBoard generateBoard();
+
 public:
+    // Prints a gameBoard object to the console
+    const void printBoard();
+
+    // Checks to make sure the entire board is valid
+    const bool isValidBoard();
+
     // Getter for testing purposes
-    // Would like to make project more functional
-    gridLayout returnArray();
-    // Generate random board for testing purposes
-    gridLayout generateBoard();
+    gameBoard returnBoard();
+
     // Runner for the backtracking algorithm
     bool solveSudoku();
-    // Runner for initial grid validation
-    bool checkValid();
-    // Runner for printing the grid
-    void printGrid();
-    // Constructor. Initializes and validates the grid
-    solver(gridLayout localGrid);
-    // Default constructor. Returns a random grid
+
+    // Takes a board, checks to make sure it's valid
+    explicit solver(gameBoard localBoard);
+
+    // Default constructor. Returns a random board
     solver();
 
 };
+
 #endif //SUDOKU_HPP
