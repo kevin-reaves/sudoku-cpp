@@ -213,3 +213,14 @@ TEST(DISABLED_unsolvable, unsolvableColumn){
         ASSERT_FALSE(true) << "This board should be unsolvable";
     }
 }
+
+/*
+ * Simple test to generate 100 boards and solve them, then verify they're valid
+ */
+TEST(sudokuTests, solve100){
+    for(int x=0; x<100; x++){
+        solver sudokuSolver;
+        sudokuSolver.solveSudoku();
+        EXPECT_TRUE(sudokuSolver.isValidBoard());
+    }
+}
